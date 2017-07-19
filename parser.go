@@ -1,5 +1,5 @@
 // Package contains methods for parsing channel signals
-package main
+package tradechannelparser
 
 import (
 	"fmt"
@@ -214,39 +214,4 @@ func Parse(message string) (*ParseResult, bool) {
 	}
 
 	return nil, false
-}
-
-func testParseDiapason(mess string) {
-	rang, isOk := findRange(mess)
-	if isOk {
-		fmt.Println(mess, ":", rang.Left, rang.Right)
-	} else {
-		fmt.Println(mess, ": fail")
-	}
-}
-
-func testParse(mess string) {
-	res, isOk := Parse(mess)
-	if isOk {
-		fmt.Println(mess, ":", res.Currency.Name, res.Range.Left, res.Range.Right, res.Exchange)
-	} else {
-		fmt.Println(mess, ": fail")
-	}
-}
-
-func main() {
-	testParse("OMNI 0.0222-0.0225 покупка")
-	testParse("Покупка 0.00161-0.00162 BTC")
-	testParse("STRATIS - покупка 0.0023-0.00231")
-	testParse("GUP (Bittrex) ставим ордер 6700-6800")
-	testParse("MUSIC (Bittrex) покупка 835-840")
-	testParse("MUSIC (Bittrex) 835-840")
-
-	// testParseDiapason("hello, 123.45-6435.78")
-	// testParseDiapason("hello, 123.45")
-	// testParseDiapason("hello, 123-6435")
-	// testParseDiapason("hello")
-	// testParseDiapason("hello, 123.45   - 6435.78")
-	// testParseDiapason("ZEC, 123.45   - 6435.78")
-
 }
