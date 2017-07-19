@@ -1,3 +1,4 @@
+// Package contains methods for parsing channel signals
 package main
 
 import (
@@ -7,17 +8,20 @@ import (
 	"strings"
 )
 
+// ParseResult contains parsed info
 type ParseResult struct {
 	Currency Currency
 	Range    Range
 	Exchange string
 }
 
+// Range contains range left and right bounds
 type Range struct {
 	Left  float64
 	Right float64
 }
 
+// Currency contains info about currency
 type Currency struct {
 	Coin string
 	Name string
@@ -95,7 +99,7 @@ var currencies = []Currency{
 }
 
 var exchanges = []string{"Bittrex", "Poloniex"}
-var markerWords = []string{"покупаем", "скупаем", "купить", "покупка", "скупка", "закупаем", "закупка", "берем", "ордер"}
+var markerWords = []string{"покупаем", "покупай", "скупаем", "скупай", "купить", "покупка", "скупка", "закупаем", "закупка", "берем", "ордер"}
 
 var numberPattern = "[+-]?([0-9]*[.|,])?[0-9]+"
 var whitespacePattern = "[\\s]*"
@@ -122,7 +126,8 @@ func getGroupsValues(reg *regexp.Regexp, match []string) map[string]string {
 }
 
 func toFloat(s string) float64 {
-	f, _ := strconv.ParseFloat(s, 64)
+	withReplacedComma := strings.Replace(s, ",", ".", -1)
+	f, _ := strconv.ParseFloat(withReplacedComma, 64)
 	return f
 }
 
@@ -185,7 +190,8 @@ func containsMarkerWords(mess string) bool {
 	return false
 }
 
-func parse(message string) (*ParseResult, bool) {
+// Parse tries to parse the string and returns (ParseResult, true) if success and (nil, false) else
+func Parse(message string) (*ParseResult, bool) {
 	res := ParseResult{}
 
 	rang, isRangeDeterminated := findRange(message)
@@ -220,7 +226,7 @@ func testParseDiapason(mess string) {
 }
 
 func testParse(mess string) {
-	res, isOk := parse(mess)
+	res, isOk := Parse(mess)
 	if isOk {
 		fmt.Println(mess, ":", res.Currency.Name, res.Range.Left, res.Range.Right, res.Exchange)
 	} else {
