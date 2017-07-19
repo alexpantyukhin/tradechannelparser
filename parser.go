@@ -95,6 +95,7 @@ var currencies = []Currency{
 }
 
 var exchanges = []string{"Bittrex", "Poloniex"}
+var markerWords = []string{"покупаем", "скупаем", "купить", "покупка", "скупка", "закупаем", "закупка", "берем", "ордер"}
 
 var numberPattern = "[+-]?([0-9]*[.|,])?[0-9]+"
 var whitespacePattern = "[\\s]*"
@@ -170,6 +171,20 @@ func findExchange(mess string) (string, bool) {
 	return "", false
 }
 
+func containsMarkerWords(mess string) bool {
+	lowerMess := strings.ToLower(mess)
+
+	for _, element := range markerWords {
+		lowerMarker := strings.ToLower(element)
+
+		if strings.Contains(lowerMess, lowerMarker) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func parse(message string) (*ParseResult, bool) {
 	res := ParseResult{}
 
@@ -188,7 +203,7 @@ func parse(message string) (*ParseResult, bool) {
 		res.Exchange = exchange
 	}
 
-	if isRangeDeterminated && isCurrencyFound {
+	if containsMarkerWords(message) && isRangeDeterminated && isCurrencyFound {
 		return &res, true
 	}
 
@@ -219,6 +234,7 @@ func main() {
 	testParse("STRATIS - покупка 0.0023-0.00231")
 	testParse("GUP (Bittrex) ставим ордер 6700-6800")
 	testParse("MUSIC (Bittrex) покупка 835-840")
+	testParse("MUSIC (Bittrex) 835-840")
 
 	// testParseDiapason("hello, 123.45-6435.78")
 	// testParseDiapason("hello, 123.45")
